@@ -1,46 +1,17 @@
 var canvas = document.getElementById('canvas')
 var context = canvas.getContext('2d')
+var eraser = document.getElementById('eraser')
 
-var pageWidth = document.documentElement.clientWidth
-var pageHeight = document.documentElement.clientHeight
-canvas.width = pageWidth
-canvas.height = pageHeight
+canvasSize(canvas)
 
-var painting = false
-var lastPoint = {
-    x: undefined, 
-    y: undefined
-}
-canvas.onmousedown = function(e) {
-    console.log('down')
-    painting = true
-    var x = e.clientX
-    var y = e.clientY
-    drawCircle(x, y, 2)
-    lastPoint = {
-        x: x,
-        y: y
-    }
-    drawLine(x, y, x, y)
-}
+listenToMouse(canvas)
 
-canvas.onmousemove = function(e) {
-    if (painting) {
-        console.log('move')
-        var x = e.clientX
-        var y = e.clientY
-        var newPoint = {
-            x: x,
-            y: y
-        }
-        drawCircle(x, y, 2)
-        drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y)
-        lastPoint = newPoint
-    }
-}
 
-canvas.onmouseup = function(e) {
-    painting = false
+
+
+var isEraser = false
+eraser.onclick = function(e) {
+    isEraser = !isEraser
 }
 
 function drawCircle(x, y, radius) {
@@ -56,4 +27,52 @@ function drawLine(x, y, x1, y1) {
     context.lineTo(x1, y1)
     context.stroke()
     context.closePath()
+}
+
+function canvasSize(canvas) {
+    var pageWidth = document.documentElement.clientWidth
+    var pageHeight = document.documentElement.clientHeight
+    canvas.width = pageWidth
+    canvas.height = pageHeight
+}
+
+function listenToMouse(canvas) {
+    var isPainting = false
+
+    var lastPoint = {
+        x: undefined, 
+        y: undefined
+    }
+
+    canvas.onmousedown = function(e) {
+        isPainting = true
+        var x = e.clientX
+        var y = e.clientY
+        if (isEraser) {
+            context.clearRect(x-7.5, y-7.5, 15, 15)
+        } else {
+            drawCircle(x, y, 2.2)
+            lastPoint.x = x
+            lastPoint.y = y
+        }  
+    }
+
+    canvas.onmousemove = function(e) {
+        if (isPainting) {
+            var x = e.clientX
+            var y = e.clientY      
+            if (isEraser) {
+                context.clearRect(x-7.5, y-7.5, 15, 15)
+            } else {
+                drawCircle(x, y, 2.2)
+                drawLine(lastPoint.x, lastPoint.y, x, y)
+                lastPoint.x = x
+                lastPoint.y = y
+            } 
+        }
+    }
+
+    canvas.onmouseup = function(e) {
+        isPainting = false
+    }
 }
