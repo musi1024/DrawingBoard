@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-Hans">
 <head>
     <meta charset="utf-8" />
     <title>我的画板</title>
@@ -8,9 +8,35 @@
 </head>
 <body>
     <canvas id='canvas' width=300 height=300></canvas>
-    <button id="eraser">橡皮擦</button>
+    <div id="actions" class="actions">
+        <svg id="pen" class="icon active">
+            <use xlink:href="#icon-pen"></use>
+        </svg>
+        <svg id="eraser" class="icon">
+            <use xlink:href="#icon-eraser"></use>
+        </svg>
+        <svg id="clear" class="icon">
+            <use xlink:href="#icon-clear"></use>
+        </svg>
+        <svg id="download" class="icon">
+            <use xlink:href="#icon-download"></use>
+        </svg>
+    </div>
+    <ol id='colors' class="colors">
+        <li class="black colorActive"></li>
+        <li class="green"></li>
+        <li class="red"></li>
+        <li class="blue"></li>
+    </ol>
+    <ol class="sizes" id="sizes">
+        <li id="thin" class="thin"></li>
+        <li id="thick" class="thick"></li>
+    </ol>
+
+    
 
     <script src="main.js"></script>
+    <script src=//at.alicdn.com/t/font_735696_uuccpgn0gmn.js></script>
 </body>
 
 </html>
