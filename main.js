@@ -9,11 +9,6 @@ var lastPoint = {
     y: undefined
 }
 
-document.body.ontouchstart = function(event) {
-    event.preventDefault()
-}
-event.preventDefault()
-
 setCanvasSize(canvas)
 
 pen.onclick =function() {
