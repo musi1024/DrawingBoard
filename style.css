@@ -63,7 +63,6 @@ ul, ol {
 
 input[type=range] {
     transform: rotate3d(0,0,1,-90deg);
-    border-radius: 10px;
 }
 
 
