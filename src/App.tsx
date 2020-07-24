@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import styled from 'styled-components/macro';
+import Icon from 'components/Icon';
 
 const Wrap = styled.div`
   position: relative;
