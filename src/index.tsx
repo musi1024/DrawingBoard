@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import preventScroll from 'utils/preventScroll.js';
+
+preventScroll();
 
 ReactDOM.render(
   <React.StrictMode>
