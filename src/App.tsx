@@ -3,7 +3,8 @@ import styled from 'styled-components/macro';
 import vw from 'utils/vw';
 import { drawCircle, drawLine } from 'utils/draw';
 import eraser from 'utils/eraser';
-import Tool from 'components/ToolWrap';
+import ToolWrap from 'components/ToolWrap';
+import ToolBlock from 'components/ToolBlock';
 import Icon from 'components/Icon';
 import Picture from 'components/Picture';
 
@@ -90,22 +91,30 @@ function App() {
         onTouchStart={handleStart}
         onTouchMove={handleMove}
       ></canvas>
-      <Tool>
-        <Icon type="save" onClick={save} />
-        <Icon type="clear" onClick={clear} />
-        <Icon
-          type="pen"
-          active={!isEraser}
-          style={{ marginTop: vw(15) }}
-          onClick={() => toggleEraser(false)}
-        />
-        <Icon
-          type="eraser"
-          active={isEraser}
-          style={{ marginTop: vw(15) }}
-          onClick={() => toggleEraser(true)}
-        />
-      </Tool>
+      <ToolWrap>
+        <ToolBlock>
+          <Icon type="save" onClick={save} />
+          <Icon type="clear" onClick={clear} />
+        </ToolBlock>
+        <ToolBlock
+          style={{
+            padding: `${vw(15)} 0`,
+            borderTop: `${vw(1)} solid rgb(236 231 231)`,
+            borderBottom: `${vw(1)} solid rgb(236 231 231)`
+          }}
+        >
+          <Icon
+            type="pen"
+            active={!isEraser}
+            onClick={() => toggleEraser(false)}
+          />
+          <Icon
+            type="eraser"
+            active={isEraser}
+            onClick={() => toggleEraser(true)}
+          />
+        </ToolBlock>
+      </ToolWrap>
       <Picture
         open={showPicture}
         imgUrl={imgUrl}
