@@ -1,9 +1,11 @@
 import React, { useRef, useLayoutEffect, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
+import vw from 'utils/vw';
 import { drawCircle, drawLine } from 'utils/draw';
 import eraser from 'utils/eraser';
 import Tool from 'components/ToolWrap';
 import Icon from 'components/Icon';
+import Picture from 'components/Picture';
 
 const Wrap = styled.div`
   position: relative;
@@ -62,14 +64,14 @@ function App() {
     [isEraser]
   );
 
-  const save = useCallback(() => {
+  // save img
+  const [imgUrl, setImgUrl] = useState<string>('');
+  const [showPicture, setShowPicture] = useState<boolean>(false);
+  const save = useCallback(async () => {
     if (canvasRef.current) {
-      const url = canvasRef.current.toDataURL('image/png');
-      const a = document.createElement('a');
-      document.body.appendChild(a);
-      a.href = url;
-      a.download = 'picture';
-      a.click();
+      const url = await canvasRef.current.toDataURL('image/png');
+      setImgUrl(url);
+      setShowPicture(true);
     }
   }, []);
 
@@ -89,19 +91,26 @@ function App() {
         onTouchMove={handleMove}
       ></canvas>
       <Tool>
-        <Icon type="dakaiwenjianjia" onClick={save} />
-        <Icon type="lajixiang_huaban1" onClick={clear} />
+        <Icon type="save" onClick={save} />
+        <Icon type="clear" onClick={clear} />
         <Icon
-          type="huabi_huaban1"
+          type="pen"
           active={!isEraser}
+          style={{ marginTop: vw(15) }}
           onClick={() => toggleEraser(false)}
         />
         <Icon
-          type="xiangpi_huaban1"
+          type="eraser"
           active={isEraser}
+          style={{ marginTop: vw(15) }}
           onClick={() => toggleEraser(true)}
         />
       </Tool>
+      <Picture
+        open={showPicture}
+        imgUrl={imgUrl}
+        onClose={() => setShowPicture(false)}
+      />
     </Wrap>
   );
 }

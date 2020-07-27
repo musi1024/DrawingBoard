@@ -9,11 +9,11 @@ interface SvgProps {
 const Svg = styled.svg.attrs({ ariaHidden: 'true' })<SvgProps>`
   width: ${vw(80)};
   height: ${vw(80)};
-  margin: ${vw(8)};
   vertical-align: -0.15em;
   fill: currentColor;
   overflow: hidden;
-  border: ${({ active }) => (active ? `1px solid red` : null)};
+  background-color: ${({ active }) => (active ? `#ffffff` : null)};
+  border-radius: ${vw(8)};
 `;
 
 interface IconProps {
