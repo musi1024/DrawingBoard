@@ -7,6 +7,7 @@ import ToolWrap from 'components/ToolWrap';
 import ToolBlock from 'components/ToolBlock';
 import Icon from 'components/Icon';
 import Picture from 'components/Picture';
+import Slider from 'components/Slider';
 
 const Wrap = styled.div`
   position: relative;
@@ -82,6 +83,10 @@ function App() {
     []
   );
 
+  const setPenSize = useCallback(value => {
+    console.log(value);
+  }, []);
+
   return (
     <Wrap className="App">
       <canvas
@@ -114,6 +119,7 @@ function App() {
             onClick={() => toggleEraser(true)}
           />
         </ToolBlock>
+        <Slider onChange={setPenSize} />
       </ToolWrap>
       <Picture
         open={showPicture}

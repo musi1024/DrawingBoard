@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import 'rpf/react/vconsole';
+import 'index.css';
+import App from 'App';
+// import 'rpf/react/vconsole';
 import preventScroll from 'rpf/un/preventScroll.js';
 
 preventScroll();
