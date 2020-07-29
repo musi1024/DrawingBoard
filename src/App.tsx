@@ -1,5 +1,6 @@
 import React, { useRef, useLayoutEffect, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
+import useThrottledCallback from 'rpf/react/hooks/useThrottledCallback';
 import vw from 'utils/vw';
 import { drawCircle, drawLine } from 'utils/draw';
 import eraser from 'utils/eraser';
@@ -83,9 +84,9 @@ function App() {
     []
   );
 
-  const setPenSize = useCallback(value => {
+  const setPenSize = useThrottledCallback((value: number) => {
     console.log(value);
-  }, []);
+  }, 200);
 
   return (
     <Wrap className="App">
@@ -119,7 +120,13 @@ function App() {
             onClick={() => toggleEraser(true)}
           />
         </ToolBlock>
-        <Slider onChange={setPenSize} />
+        <Slider
+          style={{ width: '92%' }}
+          value={5}
+          min={1}
+          max={10}
+          onChange={setPenSize}
+        />
       </ToolWrap>
       <Picture
         open={showPicture}

@@ -4,6 +4,9 @@ import clamp from 'ramda/src/clamp';
 import vw from 'utils/vw';
 
 interface SliderProps {
+  value?: number;
+  max?: number;
+  min?: number;
   style?: React.CSSProperties | undefined;
   onChange?: (value: number) => void;
 }
@@ -32,36 +35,52 @@ const Handle = styled.div`
   transform: translateX(-50%);
 `;
 
-const Slider: React.FC<SliderProps> = ({ style, onChange }) => {
+const Slider: React.FC<SliderProps> = ({
+  style,
+  onChange,
+  value = 0,
+  max = 100,
+  min = 0
+}) => {
   const onChangeCb = useRef<(value: number) => void | null>();
   useEffect(() => {
     onChangeCb.current = onChange;
   }, [onChange]);
 
-  const [value, setValue] = useState<number>(0);
   const barRef = useRef<HTMLDivElement | null>(null);
+  const [handleX, setHandleX] = useState<number>(
+    () => (value / (max - min + 1)) * 100
+  );
+
   const lastX = useRef<number | null>();
 
   const onTouchStart = useCallback(e => {
-    const x = e.touches[0].clientX;
-    lastX.current = x;
+    lastX.current = e.touches[0].clientX;
   }, []);
 
-  const onTouchMove = useCallback(e => {
-    const clientX = e.touches[0].clientX;
-    if (lastX.current && barRef.current) {
-      const x = ((clientX - lastX.current) / barRef.current.clientWidth) * 100;
-      const res = clamp(0, 100, Math.round(x));
-      setValue(res);
-      onChangeCb.current && onChangeCb.current(res);
-    }
-  }, []);
+  const onTouchMove = useCallback(
+    e => {
+      const clientX = e.touches[0].clientX;
+      if (lastX.current && barRef.current) {
+        const x =
+          ((clientX - lastX.current) / barRef.current.clientWidth) * 100;
+        setHandleX(s => {
+          const res = clamp(0, 100, s + x);
+          onChangeCb.current &&
+            onChangeCb.current(Math.floor(res / (max - min + 1)));
+          return res;
+        });
+      }
+      lastX.current = clientX;
+    },
+    [max, min]
+  );
 
   return (
     <Wrap style={style}>
       <Bar ref={barRef} />
       <Handle
-        style={{ left: `${value}%` }}
+        style={{ left: `${handleX}%` }}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
       />
