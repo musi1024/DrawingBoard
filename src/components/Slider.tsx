@@ -42,39 +42,34 @@ const Slider: React.FC<SliderProps> = ({
   max = 100,
   min = 0
 }) => {
-  const onChangeCb = useRef<(value: number) => void | null>();
-  useEffect(() => {
-    onChangeCb.current = onChange;
-  }, [onChange]);
-
   const barRef = useRef<HTMLDivElement | null>(null);
   const [handleX, setHandleX] = useState<number>(
     () => (value / (max - min + 1)) * 100
   );
 
   const lastX = useRef<number | null>();
-
   const onTouchStart = useCallback(e => {
     lastX.current = e.touches[0].clientX;
   }, []);
+  const onTouchMove = useCallback(e => {
+    const clientX = e.touches[0].clientX;
+    if (lastX.current && barRef.current) {
+      const x = ((clientX - lastX.current) / barRef.current.clientWidth) * 100;
+      setHandleX(s => clamp(0, 100, s + x));
+    }
+    lastX.current = clientX;
+  }, []);
 
-  const onTouchMove = useCallback(
-    e => {
-      const clientX = e.touches[0].clientX;
-      if (lastX.current && barRef.current) {
-        const x =
-          ((clientX - lastX.current) / barRef.current.clientWidth) * 100;
-        setHandleX(s => {
-          const res = clamp(0, 100, s + x);
-          onChangeCb.current &&
-            onChangeCb.current(Math.floor(res / (max - min + 1)));
-          return res;
-        });
-      }
-      lastX.current = clientX;
-    },
-    [max, min]
-  );
+  const onChangeCb = useRef<(value: number) => void | null>();
+  useEffect(() => {
+    onChangeCb.current = onChange;
+  }, [onChange]);
+  useEffect(() => {
+    onChangeCb.current &&
+      onChangeCb.current(
+        clamp(min, max, Math.floor(handleX / (max - min + 1)))
+      );
+  }, [handleX, max, min]);
 
   return (
     <Wrap style={style}>

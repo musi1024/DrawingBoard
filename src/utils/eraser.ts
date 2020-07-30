@@ -1,8 +1,7 @@
 import { Ctx, Point } from './utils';
 
-const size = 20;
-
-function eraser(ctx: Ctx, { x, y }: Point): void {
+function eraser(ctx: Ctx, { x, y, lineWidth }: Point): void {
+  const size = lineWidth * 4;
   if (ctx) ctx.clearRect(x - size / 2, y - size / 2, size, size);
 }
 

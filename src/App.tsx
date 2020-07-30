@@ -1,6 +1,5 @@
 import React, { useRef, useLayoutEffect, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
-import useThrottledCallback from 'rpf/react/hooks/useThrottledCallback';
 import vw from 'utils/vw';
 import { drawCircle, drawLine } from 'utils/draw';
 import eraser from 'utils/eraser';
@@ -32,6 +31,10 @@ function App() {
   useLayoutEffect(() => {
     if (canvasRef.current) {
       ctx.current = canvasRef.current.getContext('2d');
+      const scale = window.devicePixelRatio || 4;
+      canvasRef.current.width = winW * scale;
+      canvasRef.current.height = winH * scale;
+      ctx?.current?.scale(scale, scale);
     }
   }, []);
 
@@ -39,32 +42,35 @@ function App() {
   const [isEraser, setIsEraser] = useState<boolean>(false);
   const toggleEraser = useCallback((value: boolean) => setIsEraser(value), []);
 
+  // pen size
+  const [lineWidth, setLineWidth] = useState<number>(5);
   // handle touchEvent start & move
   const lastPoint = useRef<Point>({ x: 0, y: 0 });
   const handleStart = useCallback(
     (e: React.TouchEvent<HTMLCanvasElement>) => {
       const { clientX: x, clientY: y } = e.touches[0];
-      if (isEraser) return eraser(ctx.current, { x, y });
-      drawCircle(ctx.current, { x, y });
       lastPoint.current = { x, y };
+      if (isEraser) return eraser(ctx.current, { x, y, lineWidth });
+      drawCircle(ctx.current, { x, y, lineWidth });
     },
-    [isEraser]
+    [isEraser, lineWidth]
   );
   const handleMove = useCallback(
     (e: React.TouchEvent<HTMLCanvasElement>) => {
       const { clientX: x, clientY: y } = e.touches[0];
       const { x: lastX, y: lastY } = lastPoint.current;
-      if (isEraser) return eraser(ctx.current, { x, y });
-      drawCircle(ctx.current, { x, y });
+      lastPoint.current = { x, y };
+      if (isEraser) return eraser(ctx.current, { x, y, lineWidth });
+      drawCircle(ctx.current, { x, y, lineWidth });
       drawLine(ctx.current, {
         x,
         y,
         lastX,
-        lastY
+        lastY,
+        lineWidth
       });
-      lastPoint.current = { x, y };
     },
-    [isEraser]
+    [isEraser, lineWidth]
   );
 
   // save img
@@ -84,16 +90,13 @@ function App() {
     []
   );
 
-  const setPenSize = useThrottledCallback((value: number) => {
-    console.log(value);
-  }, 200);
+  const setPenSize = useCallback((value: number) => setLineWidth(value), []);
 
   return (
     <Wrap className="App">
       <canvas
         ref={canvasRef}
-        width={winW}
-        height={winH}
+        style={{ width: winW, height: winH }}
         onTouchStart={handleStart}
         onTouchMove={handleMove}
       ></canvas>
