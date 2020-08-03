@@ -17,7 +17,6 @@ interface BarProps {
 const Wrap = styled.div`
   position: relative;
   width: 100%;
-  margin-top: ${vw(40)};
 `;
 
 const Bar = styled.div<BarProps>`

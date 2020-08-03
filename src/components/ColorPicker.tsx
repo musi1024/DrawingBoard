@@ -5,7 +5,9 @@ import vwToPx from 'rpf/un/vwToPx';
 
 type Color = string;
 interface ColorPickerProps {
+  className?: string;
   style?: CSSProperties | undefined;
+  colors?: [string];
   onChange?: (color: Color) => void;
 }
 interface MonitorProps {
@@ -79,8 +81,13 @@ const PickerArr = [
   '#ba68c8'
 ];
 
-const ColorPicker: React.FC<ColorPickerProps> = ({ style, onChange }) => {
-  const [color, setColor] = useState<Color>(PickerArr[0]);
+const ColorPicker: React.FC<ColorPickerProps> = ({
+  className,
+  style,
+  colors,
+  onChange
+}) => {
+  const [color, setColor] = useState<Color>(colors?.[0] || PickerArr[0]);
 
   const pickColor = (color: Color) => {
     setColor(color);
@@ -88,7 +95,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ style, onChange }) => {
   };
 
   return (
-    <Wrap style={style}>
+    <Wrap className={className} style={style}>
       <Monitor color={color}>{color}</Monitor>
       <PickerWrap>
         {PickerArr.map((color, index) => (

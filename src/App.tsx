@@ -1,6 +1,5 @@
 import React, { useRef, useLayoutEffect, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
-import { BlockPicker } from 'react-color';
 import vw from 'utils/vw';
 import { drawCircle, drawLine } from 'utils/draw';
 import eraser from 'utils/eraser';
@@ -133,13 +132,13 @@ function App() {
           />
         </ToolBlock>
         <Slider
-          style={{ width: '92%' }}
+          style={{ width: '92%', margin: `${vw(40)} 0` }}
           value={5}
           min={1}
           max={10}
           onChange={setPenSize}
         />
-        <ColorPicker style={{ marginTop: vw(20) }} onChange={setColor} />
+        <ColorPicker style={{ marginBottom: vw(10) }} onChange={setColor} />
       </ToolWrap>
       <Picture
         open={showPicture}

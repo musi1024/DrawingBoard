@@ -11,7 +11,6 @@ const Wrap = styled.div`
   left: ${vw(40)};
   top: ${vw(40)};
   width: ${vw(200)};
-  height: ${vw(400)};
   padding: ${vw(15)};
   background-color: rgba(58, 74, 109, 0.9);
   border-radius: ${vw(18)};
