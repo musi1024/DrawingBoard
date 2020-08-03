@@ -8,6 +8,7 @@ import {
 } from 'framer-motion';
 import styled from 'styled-components/macro';
 import usePrevious from 'rpf/react/hooks/usePrevious';
+import AutoScale from './AutoScale';
 import Mask from './Mask';
 
 interface ModalMaskProps {
@@ -23,6 +24,7 @@ interface ModalWrapProps extends ModalMaskProps {
     | AnimationControls
     | TargetAndTransition
     | undefined;
+  HPW?: number;
 }
 interface ModalProps extends ModalWrapProps {
   open: boolean;
@@ -61,6 +63,7 @@ const ModalWrap: React.FC<ModalWrapProps> = ({
   controls,
   children,
   maskOpacity,
+  HPW,
   align = 'center'
 }) => {
   return (
@@ -73,7 +76,7 @@ const ModalWrap: React.FC<ModalWrapProps> = ({
       align={align}
     >
       <motion.div animate={controls} variants={child} transition={{ duration }}>
-        {children}
+        <AutoScale HPW={HPW}>{children}</AutoScale>
       </motion.div>
     </ModalMask>
   );
