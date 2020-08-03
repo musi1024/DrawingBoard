@@ -1,5 +1,6 @@
 import React, { useRef, useLayoutEffect, useCallback, useState } from 'react';
 import styled from 'styled-components/macro';
+import { BlockPicker } from 'react-color';
 import vw from 'utils/vw';
 import { drawCircle, drawLine } from 'utils/draw';
 import eraser from 'utils/eraser';
@@ -8,6 +9,7 @@ import ToolBlock from 'components/ToolBlock';
 import Icon from 'components/Icon';
 import Picture from 'components/Picture';
 import Slider from 'components/Slider';
+import ColorPicker from 'components/ColorPicker';
 
 const Wrap = styled.div`
   position: relative;
@@ -92,6 +94,13 @@ function App() {
 
   const setPenSize = useCallback((value: number) => setLineWidth(value), []);
 
+  const setColor = useCallback(color => {
+    if (ctx.current) {
+      ctx.current.fillStyle = color;
+      ctx.current.strokeStyle = color;
+    }
+  }, []);
+
   return (
     <Wrap className="App">
       <canvas
@@ -130,6 +139,7 @@ function App() {
           max={10}
           onChange={setPenSize}
         />
+        <ColorPicker style={{ marginTop: vw(20) }} onChange={setColor} />
       </ToolWrap>
       <Picture
         open={showPicture}
