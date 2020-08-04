@@ -3,7 +3,7 @@ import styled from 'styled-components/macro';
 import vw from 'utils/vw';
 import { drawCircle, drawLine } from 'utils/draw';
 import eraser from 'utils/eraser';
-import { DRAW_BOARD } from 'configs/storageKey';
+import storageKey from 'configs/storageKey';
 import ToolWrap from 'components/ToolWrap';
 import ToolBlock from 'components/ToolBlock';
 import Icon from 'components/Icon';
@@ -17,11 +17,6 @@ const Wrap = styled.div`
   height: 100%;
   overflow: hidden;
 `;
-
-interface Point {
-  x: number;
-  y: number;
-}
 
 const winW = window.innerWidth;
 const winH = window.innerHeight;
@@ -42,7 +37,9 @@ function App() {
 
   // get img from localStorage to draw in canvas
   useLayoutEffect(() => {
-    const dataURL = JSON.parse(String(localStorage.getItem(DRAW_BOARD)));
+    const dataURL = JSON.parse(
+      String(localStorage.getItem(storageKey.DRAW_BOARD))
+    );
     const img = new Image();
     if (dataURL) {
       img.onload = () => ctx?.current?.drawImage(img, 0, 0, winW, winH);
@@ -53,7 +50,7 @@ function App() {
   const onTouchEnd = () => {
     if (canvasRef.current) {
       const dataURL = canvasRef.current.toDataURL('image/png');
-      localStorage.setItem(DRAW_BOARD, JSON.stringify(dataURL));
+      localStorage.setItem(storageKey.DRAW_BOARD, JSON.stringify(dataURL));
     }
   };
 
@@ -64,7 +61,10 @@ function App() {
   // pen size
   const [lineWidth, setLineWidth] = useState<number>(5);
   // handle touchEvent start & move
-  const lastPoint = useRef<Point>({ x: 0, y: 0 });
+  const lastPoint = useRef<{
+    x: number;
+    y: number;
+  }>({ x: 0, y: 0 });
   const handleStart = useCallback(
     (e: React.TouchEvent<HTMLCanvasElement>) => {
       const { clientX: x, clientY: y } = e.touches[0];

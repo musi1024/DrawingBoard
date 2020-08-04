@@ -1,7 +1,16 @@
-import React, { useState } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback
+} from 'react';
 import styled, { CSSProperties } from 'styled-components/macro';
-import vw from 'utils/vw';
 import vwToPx from 'rpf/un/vwToPx';
+import vw from 'utils/vw';
+import isHex from 'utils/isHex';
+import isDark from 'utils/isDark';
+import storageKey from 'configs/storageKey';
 
 type Color = string;
 interface ColorPickerProps {
@@ -12,6 +21,7 @@ interface ColorPickerProps {
 }
 interface MonitorProps {
   color: Color;
+  fontColor: Color;
 }
 interface PickerProps {
   color: Color;
@@ -37,7 +47,7 @@ const Monitor = styled.div<MonitorProps>`
   background-color: ${p => p.color};
   border-top-left-radius: ${vw(12)};
   border-top-right-radius: ${vw(12)};
-  color: #ffffff;
+  color: ${p => p.fontColor};
   font-size: ${vwToPx(vw(32))}px;
 `;
 
@@ -69,7 +79,7 @@ const Input = styled.input`
   outline: none;
 `;
 
-const PickerArr = [
+const baseColors = [
   '#d9e3f0',
   '#f47373',
   '#697689',
@@ -87,22 +97,68 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
   colors,
   onChange
 }) => {
-  const [color, setColor] = useState<Color>(colors?.[0] || PickerArr[0]);
+  const [pickerArr, setPickerArr] = useState<[Color]>(
+    () =>
+      JSON.parse(String(localStorage.getItem(storageKey.COLOR_PICKER))) ||
+      colors ||
+      baseColors
+  );
 
+  // using color
+  const [color, setColor] = useState<Color>(pickerArr[0]);
+  // input color text
+  const [inputColor, setInputColor] = useState<Color>(pickerArr[0]);
+  // monitor font color
+  const fontColor = useMemo(() => (isDark(color) ? '#ffffff' : '#000000'), [
+    color
+  ]);
+
+  // call onChange when change using color
+  const onChangeRef = useRef<(color: Color) => void>();
+  useEffect(() => {
+    if (onChange) {
+      onChangeRef.current = onChange;
+    }
+  }, [onChange]);
+  useEffect(() => {
+    if (onChangeRef.current) {
+      onChangeRef.current(color);
+    }
+  }, [color]);
+
+  // handle pick color
   const pickColor = (color: Color) => {
     setColor(color);
-    onChange && onChange(color);
+    setInputColor(color);
   };
+
+  // handle input color
+  const onInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const color = e.target.value;
+    setInputColor(color);
+    if (!isHex(color)) return;
+    setColor(color);
+    setPickerArr(s => {
+      if (s.includes(color)) return s;
+      const ss = s;
+      ss.splice(-1);
+      ss.unshift(color);
+      localStorage.setItem(storageKey.COLOR_PICKER, JSON.stringify(ss));
+      return ss;
+    });
+  }, []);
 
   return (
     <Wrap className={className} style={style}>
-      <Monitor color={color}>{color}</Monitor>
+      <Monitor fontColor={fontColor} color={color}>
+        {color}
+      </Monitor>
       <PickerWrap>
-        {PickerArr.map((color, index) => (
+        {pickerArr.map((color: Color, index: number) => (
           <Picker key={index} color={color} onClick={() => pickColor(color)} />
         ))}
       </PickerWrap>
-      <Input value={color} onChange={e => pickColor(e.target.value)} />
+      <Input maxLength={7} value={inputColor} onChange={onInput} />
     </Wrap>
   );
 };
