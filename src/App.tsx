@@ -3,6 +3,7 @@ import styled from 'styled-components/macro';
 import vw from 'utils/vw';
 import { drawCircle, drawLine } from 'utils/draw';
 import eraser from 'utils/eraser';
+import { DRAW_BOARD } from 'configs/storageKey';
 import ToolWrap from 'components/ToolWrap';
 import ToolBlock from 'components/ToolBlock';
 import Icon from 'components/Icon';
@@ -38,6 +39,23 @@ function App() {
       ctx?.current?.scale(scale, scale);
     }
   }, []);
+
+  // get img from localStorage to draw in canvas
+  useLayoutEffect(() => {
+    const dataURL = JSON.parse(String(localStorage.getItem(DRAW_BOARD)));
+    const img = new Image();
+    if (dataURL) {
+      img.onload = () => ctx?.current?.drawImage(img, 0, 0, winW, winH);
+      img.src = dataURL;
+    }
+  }, []);
+  // set img in localStorage after touchEnd
+  const onTouchEnd = () => {
+    if (canvasRef.current) {
+      const dataURL = canvasRef.current.toDataURL('image/png');
+      localStorage.setItem(DRAW_BOARD, JSON.stringify(dataURL));
+    }
+  };
 
   // eraser on/off
   const [isEraser, setIsEraser] = useState<boolean>(false);
@@ -107,6 +125,7 @@ function App() {
         style={{ width: winW, height: winH }}
         onTouchStart={handleStart}
         onTouchMove={handleMove}
+        onTouchEnd={onTouchEnd}
       ></canvas>
       <ToolWrap>
         <ToolBlock>
