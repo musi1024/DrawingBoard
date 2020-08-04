@@ -104,10 +104,10 @@ function App() {
   }, []);
 
   // clear all
-  const clear = useCallback(
-    () => ctx?.current?.clearRect(0, 0, winW, winH),
-    []
-  );
+  const clear = useCallback(() => {
+    ctx?.current?.clearRect(0, 0, winW, winH);
+    localStorage.removeItem(storageKey.DRAW_BOARD);
+  }, []);
 
   const setPenSize = useCallback((value: number) => setLineWidth(value), []);
 
