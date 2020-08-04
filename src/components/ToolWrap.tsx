@@ -9,9 +9,12 @@ const Wrap = styled.div`
   top: ${vw(20)};
 `;
 
-const Main = styled.div`
+interface MainProps {
+  show: boolean;
+}
+const Main = styled.div<MainProps>`
   width: ${vw(200)};
-  display: flex;
+  display: ${p => (p.show ? 'flex' : 'none')};
   align-content: flex-start;
   justify-content: space-around;
   flex-wrap: wrap;
@@ -29,7 +32,7 @@ const ToolWrap: React.FC<ToolProps> = ({ children }) => {
   return (
     <Wrap>
       <Icon type="huabi" onClick={() => setShow(s => !s)} />
-      {show && <Main>{children}</Main>}
+      <Main show={show}>{children}</Main>
     </Wrap>
   );
 };
